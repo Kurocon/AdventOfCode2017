@@ -8,12 +8,8 @@ def parse(line):
     if not match:
         raise ValueError("No match for line '{}'".format(line))
     return {
-        'rega': match.group('vara'),
-        'op': match.group('op'),
-        'val1': int(match.group('val1')),
-        'regb': match.group('varb'),
-        'cnd': match.group('cmp'),
-        'val2': int(match.group('val2')),
+        'rega': match.group('vara'), 'op': match.group('op'), 'val1': int(match.group('val1')),
+        'regb': match.group('varb'), 'cnd': match.group('cmp'), 'val2': int(match.group('val2')),
     }
 
 def execute(p):
