@@ -12,28 +12,28 @@ with open('day13.in', 'r') as f:
 
 data = []
 
+tmp_data = {}
+for line in inp:
+    match = REG.match(line)
+    if match:
+        tmp_data[match.group(0)] = {
+            'layer': int(match.group(1)),
+            'depth': int(match.group(2)),
+            'scanpos': 0,
+            'direction': 'inc'
+        }
+    else:
+        raise ValueError("Line did not match: {}".format(line))
+
 def reset():
     global data
     data = []
-    tmp_data = {}
-    for line in inp:
-        match = REG.match(line)
-        if match:
-            tmp_data[match.group(0)] = {
-                'layer': int(match.group(1)),
-                'depth': int(match.group(2)),
-                'scanpos': 0,
-                'direction': 'inc'
-            }
-        else:
-            raise ValueError("Line did not match: {}".format(line))
-
     c_l = 0
     for d in sorted(list(tmp_data.values()), key=lambda x: x['layer']):
         while d['layer'] > c_l:
             data.append({'layer': c_l, 'depth': 0, 'scanpos': 0, 'direction': 'inc'})
             c_l += 1
-        data.append(d)
+        data.append(d.copy())
         c_l += 1
 
 current_position = -1
@@ -102,6 +102,7 @@ while not stop:
     if len(collisions) == 0:
         print("No collisions on round with delay {}!".format(abs(current_delay+1)))
         stop = True
-    print("Offset {}, {} collision at layer {}".format(abs(current_delay+1), len(collisions), collisions[0]['layer']))
+
+    print("Offset {}, {} collision at layer {}".format(abs(current_delay+1), len(collisions) if len(collisions) else "no", collisions[0]['layer'] if len(collisions) else "N/A"))
     current_delay -= 1
 
