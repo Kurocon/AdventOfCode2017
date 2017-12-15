@@ -1,9 +1,5 @@
 import re
-
-inp = """0: 3
-1: 2
-4: 4
-6: 4""".split("\n")
+from pprint import pprint
 
 REG = re.compile(r'([0-9]+): ([0-9]+)')
 
@@ -11,6 +7,7 @@ with open('day13.in', 'r') as f:
     inp = f.readlines()
 
 data = []
+max_depth = 0
 
 tmp_data = {}
 for line in inp:
@@ -22,6 +19,8 @@ for line in inp:
             'scanpos': 0,
             'direction': 'inc'
         }
+        if int(match.group(2)) > max_depth:
+            max_depth = int(match.group(2))
     else:
         raise ValueError("Line did not match: {}".format(line))
 
@@ -86,23 +85,26 @@ while not stop:
 severity = 0
 for c in collisions:
     severity += c['layer']*c['depth']
-print("Severity is {}".format(severity))
+print ("Severity is {}".format(severity))
 
 stop = False
-current_delay = -1
+current_delay = 0
 while not stop:
-    # Reset and run the simulation with decreasing starting positions
-    # until we find a result without any collisions
-    reset()
-    current_position = current_delay
-    collisions = []
-    done = False
-    while not done:
-        done = step(stop_on_collision=True)
-    if len(collisions) == 0:
-        print("No collisions on round with delay {}!".format(abs(current_delay+1)))
+    # For each layer calculate if there is a collision
+    collision = False
+    for layer in data:
+        if layer['depth'] == 0:
+            continue
+
+        if ((current_delay + layer['layer']) % ((layer['depth']*2)-2)) == 0:
+            collision = True
+            break
+
+    if not collision:
+        print ("No collision with offset {}!".format(current_delay))
         stop = True
 
-    print("Offset {}, {} collision at layer {}".format(abs(current_delay+1), len(collisions) if len(collisions) else "no", collisions[0]['layer'] if len(collisions) else "N/A"))
-    current_delay -= 1
+    if current_delay % 10000 == 0:
+        print ("Processing... {}".format(current_delay))
 
+    current_delay += 1
