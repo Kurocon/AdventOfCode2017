@@ -35,18 +35,15 @@ print("".join(programs))
 start_programs = programs.copy()
 repetition = False
 rcount = 0
+cache = [programs.copy()]
 
 while not repetition:
     programs = step(programs)
     rcount += 1
+    cache.append(programs.copy())
     if programs == start_programs:
         repetition = True
 
 print("Repetition found after {} cycles".format(rcount))
-
 end_step = 1000000000 % rcount
-for x in range(end_step):
-    programs = step(programs)
-
-print("Stopped on cycle {}".format(end_step))
-print("".join(programs))
+print("".join(cache[end_step]))
